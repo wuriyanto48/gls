@@ -14,17 +14,21 @@ const (
 
 // Arguments parser
 type Arguments struct {
-	Path string
-	Help func()
+	Path     string
+	ShowSize bool
+	Help     func()
 }
 
 // ParseArguments will parse arguments from user's input
 func ParseArguments() (*Arguments, error) {
-	args := os.Args
 
 	var (
-		path string
+		path     = "."
+		showSize bool
 	)
+
+	flag.BoolVar(&showSize, "s", false, "show size")
+	flag.BoolVar(&showSize, "size", false, "show size")
 
 	flag.Usage = func() {
 		PrintGreenColor("   gls (ls for human)   ")
@@ -34,10 +38,10 @@ func ParseArguments() (*Arguments, error) {
 
 	flag.Parse()
 
-	if len(args) <= 1 {
-		path = "."
-	} else {
-		path = args[1]
+	args := flag.Args()
+
+	if len(args) >= 1 {
+		path = args[0]
 	}
 
 	fi, err := os.Stat(path)
@@ -52,7 +56,8 @@ func ParseArguments() (*Arguments, error) {
 	}
 
 	return &Arguments{
-		Path: path,
-		Help: flag.Usage,
+		Path:     path,
+		Help:     flag.Usage,
+		ShowSize: showSize,
 	}, nil
 }
