@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/wuriyanto48/gls"
@@ -11,20 +9,13 @@ import (
 func main() {
 	args, err := gls.ParseArguments()
 	if err != nil {
-		fmt.Println(err)
+		gls.PrintRedColor(err.Error())
+		args.Help()
 		os.Exit(1)
 	}
 
-	datas, err := ioutil.ReadDir(args.Path)
-	if err != nil {
-		fmt.Println(err)
+	if err := gls.Run(args); err != nil {
+		gls.PrintRedColor(err.Error())
 		os.Exit(1)
-	}
-
-	for _, f := range datas {
-		fmt.Println(f.Name())
-		fmt.Println(f.Size())
-		fmt.Println(f.ModTime())
-		fmt.Println(f.Sys())
 	}
 }
